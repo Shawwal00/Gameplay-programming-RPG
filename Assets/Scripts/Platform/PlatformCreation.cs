@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class PlatformCreation : MonoBehaviour
 {
@@ -30,7 +31,8 @@ public class PlatformCreation : MonoBehaviour
     private bool once;
     private bool onTop;
     private GameObject nextLocation;
-
+    private GameObject newParent;
+    
     private GameObject player;
     private GameObject sword;
 
@@ -38,6 +40,7 @@ public class PlatformCreation : MonoBehaviour
     {
         player = GameObject.Find("RPG-Character");
         sword = GameObject.Find("2Hand-Sword");
+        newParent = GameObject.Find("Parent");
 
         transform.position = startLocation.transform.position;
     }
@@ -79,14 +82,14 @@ public class PlatformCreation : MonoBehaviour
             {
                 
 
-                // Going Backwards
-                if (Vector3.Distance(transform.position, startLocation.transform.position) < 1)
+                // Going Forwards
+                if (Vector3.Distance(transform.position, endLocation.transform.position) < 1)
                 {
                     continousMovement = true;
                 }
-
-                // Going Forwards
-                else if (Vector3.Distance(transform.position, endLocation.transform.position) < 1)
+                
+                // Going Backwards
+                else if (Vector3.Distance(transform.position, startLocation.transform.position) < 1)
                 {
                     continousMovement = false;
                 }
@@ -116,10 +119,12 @@ public class PlatformCreation : MonoBehaviour
 
         if (onTop == true)
         {
-            player.transform.parent = transform;
+             newParent.transform.SetParent(transform);
+             player.transform.SetParent(newParent.transform);
         }
         else
         {
+            newParent.transform.parent = null;
             player.transform.parent = null;
         }
     }
