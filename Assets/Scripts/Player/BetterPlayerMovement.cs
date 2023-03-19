@@ -45,6 +45,7 @@ public class BetterPlayerMovement : MonoBehaviour
     private float rotationSpeed;
     private float joystickGap;
     private Vector3 xAxis;
+    private Camera splineCamera;
     
     //Combat
     private float attacking;
@@ -66,7 +67,8 @@ public class BetterPlayerMovement : MonoBehaviour
     {
         attackCooldown = 0.6f;
         attackTimer = attackCooldown;
-        
+
+        splineCamera = GameObject.Find("SplineCamera").GetComponent<Camera>();
         mainCam = Camera.main;
         playerAnimator = GetComponent<Animator>();
         playerRB = GetComponent<Rigidbody>();
@@ -111,6 +113,14 @@ public class BetterPlayerMovement : MonoBehaviour
             PowerUps();
             Jumping();
             Attacking();
+        }
+
+        else if (splineCamera.enabled)
+        {
+            PowerUps();
+            Jumping();
+            Attacking();
+            PlayerControlsUpdate();
         }
     }
 
@@ -281,9 +291,26 @@ public class BetterPlayerMovement : MonoBehaviour
             }
             else
             {
-                endRotation = Quaternion.Euler(new Vector3(0.0f, playerRotation, 0.0f));
-                transform.rotation = Quaternion.Lerp(transform.rotation,endRotation,6 *  Time.deltaTime); // Ensure this happens
-                
+                if (mainCam.enabled == true)
+                {
+                    endRotation = Quaternion.Euler(new Vector3(0.0f, playerRotation, 0.0f));
+                    transform.rotation =
+                        Quaternion.Lerp(transform.rotation, endRotation, 6 * Time.deltaTime); // Ensure this happens
+                    Debug.Log(playerRotation);
+                }
+                else if (splineCamera.enabled)
+                {
+                    if (playerRotation < 100 && playerRotation > -120)
+                    {
+                        transform.rotation = Quaternion.Euler(new Vector3(0.0f, 0, 0.0f));
+                    }
+                   else 
+                    {
+                        transform.rotation = Quaternion.Euler(new Vector3(0.0f, 180, 0.0f));
+                    }
+
+                }
+
                 // transform.rotation = Quaternion.Euler(new Vector3(0.0f, playerRotation, 0.0f)); // Lerp this     
             }
 
@@ -297,10 +324,21 @@ public class BetterPlayerMovement : MonoBehaviour
                 //Setting to random value to prevent run animation
                 playerAnimator.SetInteger("CurrentState", 10);
             }
-            
-            Vector3 movement = new Vector3(moveDirection.x, 0.0f, moveDirection.z) * (speed * Time.deltaTime); // Get current rotation
-            transform.Translate(movement, Space.World);
-            
+
+            if (mainCam.enabled == true)
+            {
+                Vector3 movement =
+                    new Vector3(moveDirection.x, 0.0f, moveDirection.z) *
+                    (speed * Time.deltaTime); // Get current rotation
+                transform.Translate(movement, Space.World);
+            }
+            else if (splineCamera.enabled == true)
+            {
+                Vector3 movement =
+                    new Vector3(0.0f, 0.0f,  moveDirection.z) *
+                    (speed * Time.deltaTime); // Get current rotation
+                transform.Translate(movement, Space.World);
+            }
         }
         else 
         {
