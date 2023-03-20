@@ -8,6 +8,7 @@ public class SplinePathCreation : MonoBehaviour
 {
    [SerializeField] public GameObject start;
    [SerializeField] public GameObject end;
+   [SerializeField] public float offset;
    private GameObject player;
    private Camera mainCam;
    private Camera splineCamera;
@@ -30,7 +31,8 @@ public class SplinePathCreation : MonoBehaviour
    private void CameraSwitch()
    {
       //Z Direction camera switch
-      if (player.transform.position.z > start.transform.position.z && player.transform.position.z < end.transform.position.z)
+      if (player.transform.position.z > start.transform.position.z && player.transform.position.z < end.transform.position.z
+          && player.transform.position.x < start.transform.position.x + offset && player.transform.position.x > start.transform.position.x - offset )
       {
          // Change camera
          mainCam.enabled = false;
