@@ -38,9 +38,9 @@ public class PlatformCreation : MonoBehaviour
 
     private void Awake()
     {
-        player = GameObject.Find("RPG-Character");
-        sword = GameObject.Find("2Hand-Sword");
-        newParent = GameObject.Find("Parent");
+        player = GameObject.FindGameObjectWithTag("Player");
+        sword = GameObject.FindGameObjectWithTag("Sword");
+        newParent = GameObject.Find("Parent"); // This should ideally be created in the script and deleted
 
         transform.position = startLocation.transform.position;
     }

@@ -16,7 +16,7 @@ public class SplinePathCreation : MonoBehaviour
 
    private void Awake()
    {
-      player = GameObject.Find("RPG-Character");
+      player = GameObject.FindGameObjectWithTag("Player");
       mainCam = Camera.main;
       splineCamera = GameObject.Find("SplineCamera").GetComponent<Camera>();
       splineCamera.enabled = false;
