@@ -56,15 +56,18 @@ public class AI : MonoBehaviour
 
     private void FollowPath()
     {
-        if (player.transform.position.x > transform.position.x + XBoundry)
+        if (player.transform.position.x < transform.position.x + XBoundry &&
+            player.transform.position.x > transform.position.x - XBoundry &&
+            player.transform.position.z < transform.position.z + YBoundry &&
+            player.transform.position.z > transform.position.z - YBoundry)
         {
-            
+            enemyState = EnemyState.Hunting;
         }
     }
     
     private void MoveToPlayer()
     {
-        
+        // Follow the okayer use Unity Pathfinding
     }
 
     private void AttackPlayer()

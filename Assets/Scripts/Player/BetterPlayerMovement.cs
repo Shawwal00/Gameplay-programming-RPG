@@ -192,7 +192,7 @@ public class BetterPlayerMovement : MonoBehaviour
     {
         if (action > 0)
         {
-            Debug.Log("Playing");
+            //Debug.Log("Playing");
             playerAnimator.SetInteger("CurrentState", 4); 
         }
 
@@ -296,7 +296,7 @@ public class BetterPlayerMovement : MonoBehaviour
                     endRotation = Quaternion.Euler(new Vector3(0.0f, playerRotation, 0.0f));
                     transform.rotation =
                         Quaternion.Lerp(transform.rotation, endRotation, 6 * Time.deltaTime); // Ensure this happens
-                    Debug.Log(playerRotation);
+                    //Debug.Log(playerRotation);
                 }
                 else if (splineCamera.enabled)
                 {
