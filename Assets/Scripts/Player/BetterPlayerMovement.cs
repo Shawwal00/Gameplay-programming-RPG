@@ -9,6 +9,7 @@ public class BetterPlayerMovement : MonoBehaviour
 {
     OwnPlayer controls;
     private Camera mainCam;
+    [HideInInspector] public float health;
     
     // Movement
     private Vector2 move;
@@ -49,7 +50,7 @@ public class BetterPlayerMovement : MonoBehaviour
     
     //Combat
     private float attacking;
-    private bool doAttack;
+   [HideInInspector] public bool doAttack;
     private float attackTimer;
     private float attackCooldown;
     
@@ -65,6 +66,8 @@ public class BetterPlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        health = 100;
+        
         attackCooldown = 0.6f;
         attackTimer = attackCooldown;
 
@@ -113,6 +116,7 @@ public class BetterPlayerMovement : MonoBehaviour
             PowerUps();
             Jumping();
             Attacking();
+            Death();
         }
 
         else if (splineCamera.enabled)
@@ -140,6 +144,14 @@ public class BetterPlayerMovement : MonoBehaviour
                 doAttack = false;
                 attackTimer = attackCooldown;
             }
+        }
+    }
+
+    private void Death()
+    {
+        if (health <= 0)
+        {
+            Debug.Log("Death");
         }
     }
 
