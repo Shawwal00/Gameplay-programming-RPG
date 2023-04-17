@@ -1,4 +1,4 @@
-using System;
+ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,14 +22,15 @@ public class AI : MonoBehaviour
     [SerializeField] public float YBoundry;
     private GameObject player;
     private NavMeshAgent agent;
-    private float scale = 2;
+    [SerializeField] public float scale;
     private Vector3 beforePosition;
     private float attackRange;
     private float attackTimer;
-    private float damage = 50;
+    [SerializeField] public float damage;
     private BetterPlayerMovement playerScript;
     private GameObject sword;
-    private float hitAmount = 3;
+    private float hitImmunityTimer;
+    [SerializeField] public float hitAmount;
     private enum EnemyState
     {
         Passive,
@@ -43,11 +44,16 @@ public class AI : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         enemyState = EnemyState.Passive;
         agent = GetComponent<NavMeshAgent>();
-        transform.localScale = new Vector3(scale, scale, scale);
         beforePosition = transform.position;
         attackRange = 2;
         playerScript = player.GetComponent<BetterPlayerMovement>();
         sword = GameObject.FindGameObjectWithTag("Sword");
+        hitImmunityTimer = 0;
+    }
+
+    private void Start()
+    {
+        transform.localScale = new Vector3(scale, scale, scale);
     }
 
     private void Update()
@@ -70,6 +76,8 @@ public class AI : MonoBehaviour
                 break;
         }
     }
+
+
 
     private void FollowPath()
     {
@@ -133,11 +141,33 @@ public class AI : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == sword && playerScript.doAttack)
+        if (other.gameObject == sword && playerScript.doAttack )
         {
-            // Change this so that it gets if the trigger is pressed
-            Debug.Log("Hit");
+            // The attacking doesn't really work that well also tried to compensate with bossSpawn Health values so 
+            // may need to change that.
+            if (hitImmunityTimer < 0.6)
+            {
                 hitAmount -= 1;
+            }
+            else
+            {
+                hitImmunityTimer += Time.deltaTime;
+            }
+
+            if (hitImmunityTimer > 0.6)
+            {
+                hitImmunityTimer = 0;
+            }
+
         }
+    }
+    
+    public void setEnemy(float xBoundry, float yBoundry, float enemyDamage, float health, float size)
+    {
+       XBoundry = xBoundry;
+       YBoundry = yBoundry;
+       damage = enemyDamage;
+       hitAmount = health;
+       scale = size;
     }
 }
