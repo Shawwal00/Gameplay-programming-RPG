@@ -63,6 +63,7 @@ public class BetterPlayerMovement : MonoBehaviour
     //4 Interact
     //5 Running
     //6 Damaged
+    //7 Double Jump
 
     private void Awake()
     {
@@ -157,7 +158,6 @@ public class BetterPlayerMovement : MonoBehaviour
 
     private void Jumping()
     {
-  
         if (currentJump == 0)
         {
             jumping = false;
@@ -180,17 +180,26 @@ public class BetterPlayerMovement : MonoBehaviour
         
         if (jumping == true )
         {
-            playerAnimator.SetInteger("CurrentState", 1);
-            playerRB.velocity = new Vector3(playerRB.velocity.x, jumpDistance, 0);
-            if (currentJump == 2)
+            if (jumpMax == 1)
             {
-                currentJump = 1;
-                jumping = false;
-            }
-            else if (currentJump == 1)
-            {
+                playerRB.velocity = new Vector3(playerRB.velocity.x, jumpDistance, 0);
+                playerAnimator.SetInteger("CurrentState", 1);
                 currentJump = 0;
                 jumping = false;
+            }
+            else if (jumpMax == 2)
+            {
+                if (currentJump == 2)
+                {
+                    playerAnimator.SetInteger("CurrentState", 1);
+                } 
+                else if (currentJump == 1)
+                {
+                    playerAnimator.SetInteger("CurrentState", 7);
+                }
+                jumping = false;
+                currentJump -= 1;
+                playerRB.velocity = new Vector3(playerRB.velocity.x, jumpDistance, 0);
             }
         }
         
