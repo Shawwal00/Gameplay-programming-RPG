@@ -17,6 +17,7 @@ public class BetterPlayerMovement : MonoBehaviour
     private float playerRotation;
     private Rigidbody playerRB;
     Quaternion endRotation;
+    private float movementBlend = 0;
     
     //Jump
     private float jump;
@@ -274,6 +275,17 @@ public class BetterPlayerMovement : MonoBehaviour
 
     private void PlayerControlsUpdate()
     {
+        
+        playerAnimator.SetFloat("Blend", movementBlend);
+        if (move.magnitude > joystickGap && movementBlend < 1)
+        {
+            movementBlend += Time.deltaTime * 2;
+        }
+        else if (move.magnitude < joystickGap && movementBlend > 0)
+        {
+            movementBlend -= Time.deltaTime * 2;
+        }
+
         // Raycast to see if the player is touching the ground
         Ray groundRay = new Ray(transform.position, Vector3.down);
         RaycastHit hit;
@@ -292,7 +304,7 @@ public class BetterPlayerMovement : MonoBehaviour
         }
         
         // Joystick gap ensure that the player does not accidentally touch the joystick
-        if (move.x < -joystickGap || move.x > joystickGap || move.y < -joystickGap || move.y > joystickGap )
+        if (move.x < -joystickGap || move.x > joystickGap || move.y < -joystickGap || move.y > joystickGap)
         {
             // Ensuring it takes into account the camera when moving
             cameraForward = followCamera.transform.forward;//y axis
@@ -338,12 +350,11 @@ public class BetterPlayerMovement : MonoBehaviour
             if (grounded == false)
             {
                 //Running
-                playerAnimator.SetInteger("CurrentState", 5);   
+                playerAnimator.SetInteger("CurrentState", 0);   
             }
             else
             {
-                //Setting to random value to prevent run animation
-                playerAnimator.SetInteger("CurrentState", 10);
+                movementBlend = 0;
             }
 
             if (mainCam.enabled == true)
