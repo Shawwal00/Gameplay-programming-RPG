@@ -20,7 +20,7 @@ public class BetterPlayerMovement : MonoBehaviour
     private float movementBlend = 0;
     
     //Jump
-    private float jump;
+    private float jump; 
     private float jumpDistance = 10;
     private bool jumping = false;
     private int jumpMax = 1;
@@ -48,7 +48,14 @@ public class BetterPlayerMovement : MonoBehaviour
     private float joystickGap;
     private Vector3 xAxis;
     private Camera splineCamera;
-    
+    private float LockOnCam;
+    private GameObject enemy;
+    private bool activateLockOnCamera = false;
+    private List <GameObject> allEnemies;
+    private GameObject[] enemyArray;
+    private int currentEnemy = 0;
+    private bool LockOnZero = false;
+
     //Combat
     private float attacking;
    [HideInInspector] public bool doAttack;
@@ -68,6 +75,8 @@ public class BetterPlayerMovement : MonoBehaviour
 
     private void Awake()
     {
+        allEnemies = new List<GameObject>();
+        
         health = 100;
         
         attackCooldown = 0.6f;
@@ -82,7 +91,7 @@ public class BetterPlayerMovement : MonoBehaviour
         offsetZ = -7;
         offsetY = 5;
         offsetX = 0;
-        rotationSpeed = 60;
+        rotationSpeed = 70;
         joystickGap = 0.45f;
 
         //Using Unity's new Input System
@@ -102,6 +111,10 @@ public class BetterPlayerMovement : MonoBehaviour
         
         controls.Player.Attack.performed += ctx => attacking = ctx.ReadValue<float>();
         controls.Player.Attack.canceled += ctx => attacking = 0.0f;
+        
+        controls.Player.LockOnCamera.performed += ctx => LockOnCam = ctx.ReadValue<float>();
+        controls.Player.LockOnCamera.canceled += ctx => LockOnCam = 0.0f;
+        
     }
 
     private void Start()
@@ -271,6 +284,72 @@ public class BetterPlayerMovement : MonoBehaviour
         offsetZ = followCamera.transform.position.z - transform.position.z;
         offsetX = followCamera.transform.position.x - transform.position.x;
         offsetY = followCamera.transform.position.y - transform.position.y;
+        
+        //Lock On Camera
+        
+        enemyArray = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var enemy in enemyArray)
+        {
+            if (Vector3.Distance(enemy.transform.position, transform.position) < 30)
+            {
+                allEnemies.Add(enemy);
+            }
+            else if (Vector3.Distance(enemy.transform.position, transform.position) > 30)
+            {
+                if (allEnemies.Contains(enemy))
+                {
+                    Debug.Log("working");
+                    allEnemies.Remove(enemy);
+                    activateLockOnCamera = false;
+                }
+            }
+        }
+
+        for (int i = 0; i < allEnemies.Count; i++)
+        {
+            if (allEnemies[i] == null)
+            {
+                allEnemies.Remove(allEnemies[i]);
+            }
+        }
+
+        if (allEnemies.Count > 0)
+        {
+            if (LockOnCam == 0 && activateLockOnCamera == true)
+            {
+                LockOnZero = true;
+            }
+
+            else if (LockOnCam == 0 && activateLockOnCamera == false)
+            {
+                LockOnZero = false;
+            }
+
+            if (LockOnCam > 0 && activateLockOnCamera == false && LockOnZero == false)
+            {
+                activateLockOnCamera = true;
+
+                if (currentEnemy < allEnemies.Count)
+                {
+                    currentEnemy += 1;
+                }
+                else if (currentEnemy == allEnemies.Count)
+                {
+                    currentEnemy = 0;
+                }
+            }
+
+            else if (LockOnCam > 0 && activateLockOnCamera == true && LockOnZero == true)
+            {
+                activateLockOnCamera = false;
+            }
+
+            if (activateLockOnCamera == true)
+            {
+                Debug.DrawLine(allEnemies[currentEnemy].transform.position, transform.position, Color.green, 0.1f);
+                followCamera.transform.LookAt(allEnemies[currentEnemy].transform);
+            }
+        }
     }
 
     private void PlayerControlsUpdate()

@@ -872,6 +872,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemyPrefabCopy
       objectReference: {fileID: 0}
+    - target: {fileID: 9216080296827068561, guid: 805c23f948be200498be176f7e1d0626, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     - target: {fileID: 9216080296827068565, guid: 805c23f948be200498be176f7e1d0626, type: 3}
       propertyPath: m_RootOrder
       value: 1
