@@ -14,6 +14,7 @@ public class BetterPlayerMovement : MonoBehaviour
     // Movement
     private Vector2 move;
     private float speed = 10;
+    private float acceleration = 1;
     private float playerRotation;
     private Rigidbody playerRB;
     Quaternion endRotation;
@@ -28,6 +29,7 @@ public class BetterPlayerMovement : MonoBehaviour
     private int currentJump = 1;
     private bool jumpButton = true;
     private bool grounded = true;
+    private float fallingDown = 5;
 
     //Interact
     [SerializeField] public float action;
@@ -172,6 +174,11 @@ public class BetterPlayerMovement : MonoBehaviour
 
     private void Jumping()
     {
+        if (grounded == true && playerRB.velocity.y <= 0)
+        {
+            playerRB.velocity = new Vector3(playerRB.velocity.x, -fallingDown, 0);
+        }
+
         if (currentJump == 0)
         {
             jumping = false;
@@ -438,16 +445,26 @@ public class BetterPlayerMovement : MonoBehaviour
 
             if (mainCam.enabled == true)
             {
+                if (acceleration < 1.6)
+                {
+                    acceleration += Time.deltaTime / 8;
+                }
+
                 Vector3 movement =
                     new Vector3(moveDirection.x, 0.0f, moveDirection.z) *
-                    (speed * Time.deltaTime); // Get current rotation
+                    (speed * acceleration * Time.deltaTime); // Get current rotation
                 transform.Translate(movement, Space.World);
             }
             else if (splineCamera.enabled == true)
             {
+                if (acceleration < 1.6)
+                {
+                    acceleration += Time.deltaTime / 8;
+                }
+                
                 Vector3 movement =
                     new Vector3(0.0f, 0.0f,  moveDirection.z) *
-                    (speed * Time.deltaTime); // Get current rotation
+                    (speed * acceleration * Time.deltaTime); // Get current rotation
                 transform.Translate(movement, Space.World);
             }
         }
@@ -455,6 +472,7 @@ public class BetterPlayerMovement : MonoBehaviour
         {
             //Idle
             playerAnimator.SetInteger("CurrentState", 0);
+            acceleration = 1;
         }
     }
 
