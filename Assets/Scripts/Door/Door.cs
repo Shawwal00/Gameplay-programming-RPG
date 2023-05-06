@@ -26,6 +26,7 @@ public class Door : MonoBehaviour
 
     private void FixedUpdate()
     {
+        //The for is their because I wanted to add additional buttons
         foreach (var button in buttons)
         {
             if (player.GetComponent<Collider>().bounds.Intersects(button.GetComponent<Collider>().bounds))
@@ -38,6 +39,7 @@ public class Door : MonoBehaviour
             
         }
 
+        //Moving Door
         if (open == true)
         {
             transform.position = Vector3.Lerp(transform.position, openTransform, 1 * Time.deltaTime);

@@ -24,11 +24,10 @@ public class BossSpawn : MonoBehaviour
    private int firstSpawnCount;
    private int secondSpawnCount;
    private int thirdSpawnCount;
-
-   //Make a list add to it the enemies do a for and constantly check if they are null
-
+   
     private void Awake()
     {
+        //Original Spawn
         enemy = GameObject.Find("EnemyPrefabCopy");
         enemyCopy = Instantiate(enemy, spawnPosition.transform.position, transform.rotation).GameObject();
         enemyScript = enemyCopy.GetComponent<AI>();
@@ -44,6 +43,7 @@ public class BossSpawn : MonoBehaviour
 
     public void SpawningMinions()
     {
+        //First Spawn
         if (enemyCopy == null && firstSpawnCount < 2)
         {
             if (firstSpawnCount == 1)
@@ -65,6 +65,7 @@ public class BossSpawn : MonoBehaviour
             enemyCopyLocation = enemyCopy.transform.position;
         }
 
+        //Second Spawn
         if (enemyCopyOne == null && firstSpawnCount == 2 && secondSpawnCount < 2)
         {
             enemyCopyThree = Instantiate(enemy, enemyCopyLocationTwo , transform.rotation).GameObject();
@@ -76,6 +77,7 @@ public class BossSpawn : MonoBehaviour
         {
             enemyCopyLocationTwo = enemyCopyOne.transform.position;
         }
+        //Third Spawn
         if (enemyCopyTwo == null && firstSpawnCount == 2 && thirdSpawnCount < 2)
         {
             enemyCopyThree = Instantiate(enemy, enemyCopyLocationThree, transform.rotation).GameObject();

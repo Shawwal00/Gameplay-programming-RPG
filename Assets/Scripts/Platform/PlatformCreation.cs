@@ -48,6 +48,7 @@ public class PlatformCreation : MonoBehaviour
 
     private void FixedUpdate()
     {    
+        //Platform Fall Down
         if (fall == true)
         {
             platformFallTime -= Time.deltaTime;
@@ -66,6 +67,7 @@ public class PlatformCreation : MonoBehaviour
             }
         }
 
+        //Destroy Platform after falling
         if (platformDestroy == true)
         {
             destroyTimeAfterHit -= Time.deltaTime;
@@ -75,6 +77,7 @@ public class PlatformCreation : MonoBehaviour
             }
         }
 
+        // Moving Platform
         if (movingPlatform == true)
         {
 
@@ -97,13 +100,15 @@ public class PlatformCreation : MonoBehaviour
                 // Going Backwards
                 if (continousMovement == true)
                 {
-                    transform.position = Vector3.Lerp(transform.position, startLocation.transform.position, moveSpeed * Time.deltaTime);
+                    transform.position = Vector3.Lerp(transform.position, startLocation.transform.position, 
+                        moveSpeed * Time.deltaTime);
                 }
 
                 // Going Forwards
                 else if (continousMovement == false)
                 {
-                    transform.position = Vector3.Lerp(transform.position, endLocation.transform.position, moveSpeed * Time.deltaTime);
+                    transform.position = Vector3.Lerp(transform.position, endLocation.transform.position, 
+                        moveSpeed * Time.deltaTime);
                 }
             }
             else
@@ -117,6 +122,7 @@ public class PlatformCreation : MonoBehaviour
             }
         }
 
+        // Making the character stay on top of the platform
         if (onTop == true)
         {
              newParent.transform.SetParent(transform);

@@ -25,14 +25,19 @@ public class SplinePathCreation : MonoBehaviour
 
    private void Update()
    {
+      //Only works in the X axis
       CameraSwitch();
    }
 
    private void CameraSwitch()
    {
+      Debug.DrawLine(start.transform.position, end.transform.position, Color.blue, 0.1f);
+      
       //Z Direction camera switch
-      if (player.transform.position.z > start.transform.position.z && player.transform.position.z < end.transform.position.z
-          && player.transform.position.x < start.transform.position.x + offset && player.transform.position.x > start.transform.position.x - offset )
+      if (player.transform.position.z > start.transform.position.z &&
+          player.transform.position.z < end.transform.position.z && 
+          player.transform.position.x < start.transform.position.x + offset && 
+          player.transform.position.x > start.transform.position.x - offset )
       {
          // Change camera
          mainCam.enabled = false;
@@ -52,7 +57,8 @@ public class SplinePathCreation : MonoBehaviour
       if (splineCamera.enabled == true)
       {
          // Set position of 2.5D Camera
-         splineCamera.transform.position = new Vector3(player.transform.position.x + 7, player.transform.position.y + 3,
+         splineCamera.transform.position = new Vector3(player.transform.position.x + 7, player.transform.position.y
+            + 3,
             player.transform.position.z);
          splineCamera.transform.eulerAngles = new Vector3(0,-90,0);
       }

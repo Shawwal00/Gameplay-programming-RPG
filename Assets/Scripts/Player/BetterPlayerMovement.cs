@@ -131,7 +131,8 @@ public class BetterPlayerMovement : MonoBehaviour
 
     private void Start()
     {
-        cameraDistance = new Vector3(transform.position.x + offsetX, transform.position.y + offsetY, transform.position.z + offsetZ);
+        cameraDistance = new Vector3(transform.position.x + offsetX, transform.position.y + offsetY, 
+            transform.position.z + offsetZ);
     }
 
     private void FixedUpdate()
@@ -382,7 +383,8 @@ public class BetterPlayerMovement : MonoBehaviour
 
             if (activateLockOnCamera == true)
             {
-                Debug.DrawLine(allEnemies[currentEnemy].transform.position, transform.position, Color.green, 0.1f);
+                Debug.DrawLine(allEnemies[currentEnemy].transform.position, transform.position, Color.green,
+                    0.1f);
                 followCamera.transform.LookAt(allEnemies[currentEnemy].transform);
             }
         }
@@ -443,8 +445,7 @@ public class BetterPlayerMovement : MonoBehaviour
                 {
                     endRotation = Quaternion.Euler(new Vector3(0.0f, playerRotation, 0.0f));
                     transform.rotation =
-                        Quaternion.Lerp(transform.rotation, endRotation, 6 * Time.deltaTime); // Ensure this happens
-                    //Debug.Log(playerRotation);
+                        Quaternion.Lerp(transform.rotation, endRotation, 6 * Time.deltaTime);
                 }
                 else if (splineCamera.enabled)
                 {
@@ -474,11 +475,6 @@ public class BetterPlayerMovement : MonoBehaviour
 
             if (mainCam.enabled == true)
             {
-                if (acceleration < 1)
-                {
-                    acceleration += Time.deltaTime / 4;
-                }
-
                 Vector3 movement =
                     new Vector3(moveDirection.x, 0.0f, moveDirection.z) *
                     (speed * acceleration * Time.deltaTime); // Get current rotation
@@ -486,15 +482,15 @@ public class BetterPlayerMovement : MonoBehaviour
             }
             else if (splineCamera.enabled == true)
             {
-                if (acceleration < 1.6)
-                {
-                    acceleration += Time.deltaTime / 8;
-                }
-                
                 Vector3 movement =
                     new Vector3(0.0f, 0.0f,  moveDirection.z) *
                     (speed * acceleration * Time.deltaTime); // Get current rotation
                 transform.Translate(movement, Space.World);
+            }
+            
+            if (acceleration < 1)
+            {
+                acceleration += Time.deltaTime / 4;
             }
         }
         else 

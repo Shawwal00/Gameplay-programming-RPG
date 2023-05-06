@@ -24,11 +24,13 @@ public class CinematicCamera : MonoBehaviour
         cam.enabled = false;
         cam.GetComponent<AudioListener>().enabled = false;
         doorScript = door.GetComponent<Door>();
-        endPosition = new Vector3(target.transform.position.x, target.transform.position.y, target.transform.position.z + offset);
+        endPosition = new Vector3(target.transform.position.x, target.transform.position.y,
+            target.transform.position.z + offset);
     }
 
     private void FixedUpdate()
     {
+        //Opening the Door
         if (doorScript.open == true)
         {
             cam.enabled = true;
@@ -38,6 +40,7 @@ public class CinematicCamera : MonoBehaviour
 
             // CameraShake();
 
+            //Moving the Camera Forward
             transform.position = Vector3.Lerp(transform.position, endPosition, 0.25f * Time.deltaTime);
             time += Time.deltaTime;
             if (time > endTime)
@@ -58,15 +61,18 @@ public class CinematicCamera : MonoBehaviour
 
         if (cameraShakeTime > 0 && cameraShakeTime < 0.2)
         {
-            transform.position = new Vector3(transform.position.x + 0.03f, transform.position.y, transform.position.z);
+            transform.position = new Vector3(transform.position.x + 0.03f, transform.position.y,
+                transform.position.z);
         }
         else if (cameraShakeTime > 0.2 && cameraShakeTime < 0.4)
         {
-            transform.position = new Vector3(transform.position.x - 0.06f, transform.position.y, transform.position.z);
+            transform.position = new Vector3(transform.position.x - 0.06f, transform.position.y,
+                transform.position.z);
         }
         else if (cameraShakeTime > 0.4 && cameraShakeTime < 0.6)
         {
-            transform.position = new Vector3(transform.position.x + 0.03f, transform.position.y, transform.position.z);
+            transform.position = new Vector3(transform.position.x + 0.03f, transform.position.y, 
+                transform.position.z);
         }
 
         if (cameraShakeTime > 0.8)
