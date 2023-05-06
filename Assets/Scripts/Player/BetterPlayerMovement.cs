@@ -32,7 +32,7 @@ public class BetterPlayerMovement : MonoBehaviour
     private float fallingDown = 5;
 
     //Interact
-    [SerializeField] public float action;
+    [HideInInspector] public float action;
     private bool movementPU;
     private float movementPUTimer;
 
@@ -63,6 +63,7 @@ public class BetterPlayerMovement : MonoBehaviour
    [HideInInspector] public bool doAttack;
     private float attackTimer;
     private float attackCooldown;
+    [SerializeField] public GameObject spawn;
     
     private Animator playerAnimator;
 
@@ -168,7 +169,8 @@ public class BetterPlayerMovement : MonoBehaviour
     {
         if (health <= 0)
         {
-            Debug.Log("Death");
+            transform.position = spawn.transform.position;
+            health = 100;
         }
     }
 

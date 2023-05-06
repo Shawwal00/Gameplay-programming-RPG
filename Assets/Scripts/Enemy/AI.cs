@@ -21,6 +21,7 @@ public class AI : MonoBehaviour
     [SerializeField] public float XBoundry;
     [SerializeField] public float YBoundry;
     private GameObject player;
+    private Rigidbody playerRB;
     private NavMeshAgent agent;
     [SerializeField] public float scale;
     private Vector3 beforePosition;
@@ -29,8 +30,10 @@ public class AI : MonoBehaviour
     [SerializeField] public float damage;
     private BetterPlayerMovement playerScript;
     private GameObject sword;
-    private float hitImmunityTimer;
     [SerializeField] public float hitAmount;
+    private bool takeDamage = false;
+    private bool startDamage = false;
+    private Rigidbody enemyRigidbody;
     private enum EnemyState
     {
         Passive,
@@ -41,14 +44,15 @@ public class AI : MonoBehaviour
 
     private void Awake()
     {
+        enemyRigidbody = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectWithTag("Player");
         enemyState = EnemyState.Passive;
         agent = GetComponent<NavMeshAgent>();
         beforePosition = transform.position;
-        attackRange = 2;
+        attackRange = 4;
         playerScript = player.GetComponent<BetterPlayerMovement>();
         sword = GameObject.FindGameObjectWithTag("Sword");
-        hitImmunityTimer = 0;
+        playerRB = player.GetComponent<Rigidbody>();
     }
 
     private void Start()
@@ -58,11 +62,6 @@ public class AI : MonoBehaviour
 
     private void Update()
     {
-        if (hitAmount <= 0)
-        {
-            Destroy(transform.gameObject);
-        }
-
         switch (enemyState)
         {
             case EnemyState.Passive:
@@ -77,6 +76,18 @@ public class AI : MonoBehaviour
         }
     }
 
+    private void FixedUpdate()
+    {
+        if (hitAmount <= 0)
+        {
+            Destroy(transform.gameObject);
+        }
+
+        if (startDamage == true)
+        {
+            StartCoroutine(TakeDamage());
+        }
+    }
 
 
     private void FollowPath()
@@ -119,6 +130,7 @@ public class AI : MonoBehaviour
 
     private void AttackPlayer()
     {
+        Debug.Log("Working");
         if (player.transform.position.x < transform.position.x + attackRange  &&
             player.transform.position.x > transform.position.x - attackRange  &&
             player.transform.position.z < transform.position.z + attackRange  &&
@@ -128,11 +140,11 @@ public class AI : MonoBehaviour
             if (attackTimer > 0.8)
             {
                //Play a particle effect
+               playerRB.AddForce(transform.forward * 500);
                playerScript.health -= damage;
                 attackTimer = 0;
             }
         }
-        
         else
         {
             enemyState = EnemyState.Hunting;
@@ -141,24 +153,12 @@ public class AI : MonoBehaviour
     
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == sword && playerScript.doAttack )
+        if (takeDamage == false)
         {
-            // The attacking doesn't really work that well also tried to compensate with bossSpawn Health values so 
-            // may need to change that.
-            if (hitImmunityTimer < 0.6)
+            if (other.gameObject == sword && playerScript.doAttack)
             {
-                hitAmount -= 1;
+                startDamage = true;
             }
-            else
-            {
-                hitImmunityTimer += Time.deltaTime;
-            }
-
-            if (hitImmunityTimer > 0.6)
-            {
-                hitImmunityTimer = 0;
-            }
-
         }
     }
     
@@ -169,5 +169,15 @@ public class AI : MonoBehaviour
        damage = enemyDamage;
        hitAmount = health;
        scale = size;
+    }
+
+    IEnumerator TakeDamage()
+    {
+        takeDamage = true;
+        startDamage = false;
+        enemyRigidbody.AddForce(transform.forward * (-1 * 500));
+        yield return new WaitForSeconds(0.3f);
+        hitAmount -= 1;
+        takeDamage = false;
     }
 }

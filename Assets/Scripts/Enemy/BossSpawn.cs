@@ -48,15 +48,15 @@ public class BossSpawn : MonoBehaviour
         {
             if (firstSpawnCount == 1)
             {
-                enemyCopyOne = Instantiate(enemy, enemyCopyLocation, transform.rotation).GameObject();
+                enemyCopyOne = Instantiate(enemy, enemyCopyLocation , transform.rotation).GameObject();
                 enemyScript = enemyCopyOne.GetComponent<AI>();
-                enemyScript.setEnemy(10,10,10,3,3);
+                enemyScript.setEnemy(10,10,10,2,3);
             }
             else
             {
-                enemyCopyTwo = Instantiate(enemy, enemyCopyLocation, transform.rotation).GameObject();
+                enemyCopyTwo = Instantiate(enemy, enemyCopyLocation , transform.rotation).GameObject();
                 enemyScript = enemyCopyTwo.GetComponent<AI>();
-                enemyScript.setEnemy(10,10,10,3,3);
+                enemyScript.setEnemy(10,10,10,2,3);
             }
             firstSpawnCount += 1;
         }
@@ -67,9 +67,9 @@ public class BossSpawn : MonoBehaviour
 
         if (enemyCopyOne == null && firstSpawnCount == 2 && secondSpawnCount < 2)
         {
-            enemyCopyThree = Instantiate(enemy, enemyCopyLocationTwo, transform.rotation).GameObject();
+            enemyCopyThree = Instantiate(enemy, enemyCopyLocationTwo , transform.rotation).GameObject();
             enemyScript = enemyCopyThree.GetComponent<AI>();
-            enemyScript.setEnemy(10,10,10,2,2);
+            enemyScript.setEnemy(10,10,10,1,2);
             secondSpawnCount += 1;
         }
         else if (enemyCopyOne != null)
@@ -80,7 +80,7 @@ public class BossSpawn : MonoBehaviour
         {
             enemyCopyThree = Instantiate(enemy, enemyCopyLocationThree, transform.rotation).GameObject();
             enemyScript = enemyCopyThree.GetComponent<AI>();
-            enemyScript.setEnemy(10,10,10,2,2);
+            enemyScript.setEnemy(10,10,10,1,2);
             thirdSpawnCount += 1;
         }
         else if (enemyCopyTwo != null)
