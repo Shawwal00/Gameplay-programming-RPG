@@ -13,12 +13,16 @@ public class BetterPlayerMovement : MonoBehaviour
     
     // Movement
     private Vector2 move;
+    private const float originalSpeed = 10;
     private float speed = 10;
     private float acceleration = 1;
     private float playerRotation;
     private Rigidbody playerRB;
     Quaternion endRotation;
     private float movementBlend = 0;
+    private ParticleSystem speedParticles;
+    private bool speedParticle = false;
+    ParticleSystem speedCopy;
     
     //Jump
     private float jump; 
@@ -30,6 +34,8 @@ public class BetterPlayerMovement : MonoBehaviour
     private bool jumpButton = true;
     private bool grounded = true;
     private float fallingDown = 5;
+    private ParticleSystem jumpParticles;
+    private bool onGroundParticle = false;
 
     //Interact
     [HideInInspector] public float action;
@@ -117,7 +123,10 @@ public class BetterPlayerMovement : MonoBehaviour
         
         controls.Player.LockOnCamera.performed += ctx => LockOnCam = ctx.ReadValue<float>();
         controls.Player.LockOnCamera.canceled += ctx => LockOnCam = 0.0f;
-        
+
+        jumpParticles = GameObject.Find("JumpCopy").GetComponent<ParticleSystem>();
+        speedParticles = GameObject.Find("SpeedCopy").GetComponent<ParticleSystem>();
+
     }
 
     private void Start()
@@ -204,10 +213,8 @@ public class BetterPlayerMovement : MonoBehaviour
         {
             if (jumpMax == 1)
             {
-                playerRB.velocity = new Vector3(playerRB.velocity.x, jumpDistance, 0);
                 playerAnimator.SetInteger("CurrentState", 1);
                 currentJump = 0;
-                jumping = false;
             }
             else if (jumpMax == 2)
             {
@@ -219,15 +226,23 @@ public class BetterPlayerMovement : MonoBehaviour
                 {
                     playerAnimator.SetInteger("CurrentState", 7);
                 }
-                jumping = false;
                 currentJump -= 1;
-                playerRB.velocity = new Vector3(playerRB.velocity.x, jumpDistance, 0);
             }
+            
+            jumping = false;
+            playerRB.velocity = new Vector3(playerRB.velocity.x, jumpDistance, 0);
+            onGroundParticle = false;
+            StartCoroutine(JumpParticle());
         }
         
         if (grounded == false && jump == 0) 
         {
             currentJump = jumpMax;
+            if (onGroundParticle == false)
+            {
+                StartCoroutine(JumpParticle());
+                onGroundParticle = true;
+            }
         }
     }
 
@@ -235,17 +250,27 @@ public class BetterPlayerMovement : MonoBehaviour
     {
         if (action > 0)
         {
-            //Debug.Log("Playing");
             playerAnimator.SetInteger("CurrentState", 4); 
         }
 
         if (movementPU == true)
         {
+            if (speedParticle == false)
+            {
+                speedCopy = Instantiate(speedParticles, transform.position, transform.rotation);
+                speedParticle = true;
+            }
+            speedCopy.gameObject.transform.position = transform.position;
+            speedCopy.gameObject.transform.rotation = transform.rotation;
+            speedCopy.gameObject.transform.forward = transform.forward * -1;
+            
             movementPUTimer += Time.deltaTime;
             if (movementPUTimer > 5)
             {
-                speed = speed/2;
+                speed = originalSpeed;
+                speedParticle = false;
                 movementPU = false;
+                Destroy(speedCopy.gameObject);
             }
         }
     }
@@ -520,5 +545,13 @@ public class BetterPlayerMovement : MonoBehaviour
         playerAnimator.SetInteger("CurrentState", 0);
         transform.position = spawn.transform.position;
         health = 100;
+    }
+
+    IEnumerator JumpParticle()
+    {
+        ParticleSystem currentJumpParticleSystem;
+        currentJumpParticleSystem = Instantiate(jumpParticles, transform.position, transform.rotation);
+        yield return new WaitForSeconds(1);
+        Destroy(currentJumpParticleSystem.gameObject);
     }
 }

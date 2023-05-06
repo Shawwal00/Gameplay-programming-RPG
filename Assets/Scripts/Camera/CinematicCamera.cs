@@ -36,7 +36,7 @@ public class CinematicCamera : MonoBehaviour
             mainCam.enabled = false;
             mainCam.GetComponent<AudioListener>().enabled = false;
 
-           // CameraShake();
+            // CameraShake();
 
             transform.position = Vector3.Lerp(transform.position, endPosition, 0.25f * Time.deltaTime);
             time += Time.deltaTime;
@@ -51,6 +51,7 @@ public class CinematicCamera : MonoBehaviour
         }
     }
 
+    //Scrapped the Camera Shake it works just dosen't really add anything
     private void CameraShake()
     {
         cameraShakeTime += Time.deltaTime;

@@ -11,7 +11,7 @@ public class Door : MonoBehaviour
     private GameObject player;
     [SerializeField] public float offset;
     private List<GameObject> buttons;
-    [SerializeField] public bool open;
+    [HideInInspector] public bool open = false;
 
     private void Awake()
     {
