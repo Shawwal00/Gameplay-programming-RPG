@@ -91,10 +91,10 @@ public class BetterPlayerMovement : MonoBehaviour
         playerRB = GetComponent<Rigidbody>();
         
         followCamera = Camera.main;
-        offsetZ = -7;
-        offsetY = 5;
+        offsetZ = -8;
+        offsetY = 9;
         offsetX = 0;
-        rotationSpeed = 70;
+        rotationSpeed = 75;
         joystickGap = 0.45f;
 
         //Using Unity's new Input System
@@ -253,49 +253,7 @@ public class BetterPlayerMovement : MonoBehaviour
 
     private void CameraFollow()
     {
-        //Following Player
-        xAxis = followCamera.transform.TransformDirection(cameraVector.y, 0.0f, 0.0f);
-        
-        cameraDistance = new Vector3(transform.position.x + offsetX, transform.position.y + offsetY, 
-            transform.position.z + offsetZ);
-        followCamera.transform.position = cameraDistance;
-      
-
-        //Rotation
-        if (cameraVector.x < -joystickGap || cameraVector.x > joystickGap)
-        {
-            followCamera.transform.RotateAround(transform.position,
-                new Vector3(0.0f, cameraVector.x, 0.0f), rotationSpeed * Time.deltaTime);
-        }
-        
-         if (-cameraVector.y < -joystickGap || -cameraVector.y > joystickGap)
-         {
-             if (followCamera.transform.eulerAngles.x > 5 &&
-                 followCamera.transform.eulerAngles.x < 45)
-             {
-                 followCamera.transform.RotateAround(transform.position,
-                     -xAxis, rotationSpeed * Time.deltaTime);
-             }
-             // Going Down
-             else if (followCamera.transform.eulerAngles.x < 5 && -cameraVector.y > 0)
-             {
-                 followCamera.transform.RotateAround(transform.position,
-                    -xAxis, rotationSpeed * Time.deltaTime);
-             }
-             //Going Up
-             else if (followCamera.transform.eulerAngles.x > 45 && -cameraVector.y < 0)
-             {
-                 followCamera.transform.RotateAround(transform.position,
-                    -xAxis, rotationSpeed * Time.deltaTime);
-             }
-         }
-
-        offsetZ = followCamera.transform.position.z - transform.position.z;
-        offsetX = followCamera.transform.position.x - transform.position.x;
-        offsetY = followCamera.transform.position.y - transform.position.y;
-        
-        //Lock On Camera
-        
+        //Getting all the enemies
         enemyArray = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (var enemy in enemyArray)
         {
@@ -307,13 +265,58 @@ public class BetterPlayerMovement : MonoBehaviour
             {
                 if (allEnemies.Contains(enemy))
                 {
-                    Debug.Log("working");
                     allEnemies.Remove(enemy);
                     activateLockOnCamera = false;
                 }
             }
         }
+        
+        //Following Player
+        xAxis = followCamera.transform.TransformDirection(cameraVector.y, 0.0f, 0.0f);
+        
+        cameraDistance = new Vector3(transform.position.x + offsetX, transform.position.y + offsetY,
+            transform.position.z + offsetZ);
+        followCamera.transform.position = cameraDistance;
+        
+        
+        //Non Lock On
+        if (activateLockOnCamera == false || activateLockOnCamera == true)
+        {
 
+            followCamera.transform.LookAt(transform);
+            if (cameraVector.x < -joystickGap || cameraVector.x > joystickGap)
+            {
+                followCamera.transform.RotateAround(transform.position,
+                    new Vector3(0.0f, cameraVector.x, 0.0f), rotationSpeed * Time.deltaTime);
+            }
+
+            if (-cameraVector.y < -joystickGap || -cameraVector.y > joystickGap)
+            {
+                if (followCamera.transform.eulerAngles.x > 5 &&
+                    followCamera.transform.eulerAngles.x < 45)
+                {
+                    followCamera.transform.RotateAround(transform.position,
+                        -xAxis, rotationSpeed * Time.deltaTime);
+                }
+                // Going Down
+                else if (followCamera.transform.eulerAngles.x < 5 && -cameraVector.y > 0)
+                {
+                    followCamera.transform.RotateAround(transform.position,
+                        -xAxis, rotationSpeed * Time.deltaTime);
+                }
+                //Going Up
+                else if (followCamera.transform.eulerAngles.x > 45 && -cameraVector.y < 0)
+                {
+                    followCamera.transform.RotateAround(transform.position,
+                        -xAxis, rotationSpeed * Time.deltaTime);
+                }
+            }
+        }
+        offsetZ = followCamera.transform.position.z - transform.position.z;
+        offsetX = followCamera.transform.position.x - transform.position.x;
+        offsetY = followCamera.transform.position.y - transform.position.y;
+        
+        //Lock On Camera
         for (int i = 0; i < allEnemies.Count; i++)
         {
             if (allEnemies[i] == null)
@@ -447,9 +450,9 @@ public class BetterPlayerMovement : MonoBehaviour
 
             if (mainCam.enabled == true)
             {
-                if (acceleration < 1.6)
+                if (acceleration < 1)
                 {
-                    acceleration += Time.deltaTime / 8;
+                    acceleration += Time.deltaTime / 4;
                 }
 
                 Vector3 movement =
