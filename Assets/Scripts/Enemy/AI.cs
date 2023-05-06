@@ -33,7 +33,11 @@ public class AI : MonoBehaviour
     [SerializeField] public float hitAmount;
     private bool takeDamage = false;
     private bool startDamage = false;
-    private Rigidbody enemyRigidbody;
+    private Material enemyMaterial;
+    private Material enemyHitMaterial;
+    private MeshRenderer enemyMesh;
+    private SkinnedMeshRenderer playerMesh;
+    private Material playerMaterial;
     private enum EnemyState
     {
         Passive,
@@ -44,7 +48,6 @@ public class AI : MonoBehaviour
 
     private void Awake()
     {
-        enemyRigidbody = GetComponent<Rigidbody>();
         player = GameObject.FindGameObjectWithTag("Player");
         enemyState = EnemyState.Passive;
         agent = GetComponent<NavMeshAgent>();
@@ -53,6 +56,11 @@ public class AI : MonoBehaviour
         playerScript = player.GetComponent<BetterPlayerMovement>();
         sword = GameObject.FindGameObjectWithTag("Sword");
         playerRB = player.GetComponent<Rigidbody>();
+        enemyHitMaterial = GameObject.Find("OpenDoor").GetComponent<MeshRenderer>().material;
+        enemyMaterial = GetComponent<MeshRenderer>().material;
+        enemyMesh = GetComponent<MeshRenderer>();
+        playerMesh = GameObject.Find("RPG-Character-Mesh").GetComponent<SkinnedMeshRenderer>();
+        playerMaterial = playerMesh.material;
     }
 
     private void Start()
@@ -139,10 +147,10 @@ public class AI : MonoBehaviour
             attackTimer += Time.deltaTime;
             if (attackTimer > 0.8)
             {
-               //Play a particle effect
-               playerRB.AddForce(transform.forward * 500);
+                playerRB.AddForce(transform.forward * 400);
                playerScript.health -= damage;
                 attackTimer = 0;
+                StartCoroutine(PlayerDamage());
             }
         }
         else
@@ -175,9 +183,18 @@ public class AI : MonoBehaviour
     {
         takeDamage = true;
         startDamage = false;
-        enemyRigidbody.AddForce(transform.forward * (-1 * 500));
+        enemyMesh.material = enemyHitMaterial;
         yield return new WaitForSeconds(0.3f);
         hitAmount -= 1;
         takeDamage = false;
+        yield return new WaitForSeconds(0.3f);
+        enemyMesh.material = enemyMaterial;
+    }
+
+    IEnumerator PlayerDamage()
+    {
+        playerMesh.material = enemyHitMaterial;
+        yield return new WaitForSeconds(0.6f);
+        playerMesh.material = playerMaterial;
     }
 }

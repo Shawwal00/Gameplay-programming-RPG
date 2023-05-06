@@ -169,8 +169,7 @@ public class BetterPlayerMovement : MonoBehaviour
     {
         if (health <= 0)
         {
-            transform.position = spawn.transform.position;
-            health = 100;
+           StartCoroutine(DeathAnimation());
         }
     }
 
@@ -512,5 +511,14 @@ public class BetterPlayerMovement : MonoBehaviour
                 movementPU = true;
             }
         }
+    }
+
+    IEnumerator DeathAnimation()
+    {
+        playerAnimator.SetInteger("CurrentState", 2);
+        yield return new WaitForSeconds(1);
+        playerAnimator.SetInteger("CurrentState", 0);
+        transform.position = spawn.transform.position;
+        health = 100;
     }
 }
